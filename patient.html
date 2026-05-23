@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pisgah Mobile — Patient v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-gallery: #1A1A18;
+    --bg: #FAFAF6;
+    --surface: #FFFFFF;
+    --surface-2: #F4F4EE;
+    --border: #EDEDE6;
+    --border-strong: #DCDCD3;
+    --text: #0A0A0A;
+    --text-2: #5E5E5A;
+    --text-3: #9B9B95;
+    --primary: #0F4C3A;
+    --primary-soft: #E6EFEA;
+    --primary-ink: #0A2F25;
+    --primary-grad: linear-gradient(135deg, #0F4C3A 0%, #1A6B53 100%);
+    --accent: #E0573D;
+    --accent-soft: #FCEDE7;
+    --warn: #B7791F;
+    --warn-soft: #FBF1DD;
+    --danger: #B23A48;
+    --success: #2E7D5B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+  body { background: var(--bg-gallery); color: #E4E4E0; min-height: 100vh; padding: 64px 32px 96px; -webkit-font-smoothing: antialiased; }
+  .gallery-header { max-width: 1280px; margin: 0 auto 56px; }
+  .gallery-header h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 44px; letter-spacing: -0.02em; color: #FAFAF6; margin-bottom: 12px; }
+  .gallery-header .sub { font-size: 15px; color: #8C8C84; max-width: 720px; line-height: 1.55; }
+  .section-header { max-width: 1500px; margin: 80px auto 32px; padding: 0 12px; }
+  .section-header h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 28px; color: #DCDCD3; letter-spacing: -0.01em; }
+  .section-header .sub { font-size: 13px; color: #6E6E68; margin-top: 6px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+  .palette-row { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .swatch { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #B0B0A8; letter-spacing: 0.02em; }
+  .swatch .chip { width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, 320px); gap: 72px 40px; max-width: 1500px; margin: 0 auto; justify-content: center; }
+  .frame-wrap { display: flex; flex-direction: column; align-items: center; }
+  .frame-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #6E6E68; margin-bottom: 16px; }
+  .frame-label b { color: #C7C7BE; font-weight: 600; }
+  .phone { width: 320px; height: 690px; background: var(--bg); border-radius: 44px;
+    box-shadow: 0 0 0 8px #2B2B27, 0 0 0 9px #3A3A35, 0 30px 60px -20px rgba(0,0,0,0.6), 0 12px 32px -8px rgba(0,0,0,0.4);
+    overflow: hidden; position: relative; color: var(--text); display: flex; flex-direction: column;
+  }
+  .status-bar { height: 44px; padding: 14px 24px 0; display: flex; justify-content: space-between; align-items: flex-start; font-size: 13px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+  .status-bar.light { color: #fff; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 28px; background: #0A0A0A; border-radius: 18px; z-index: 10; }
+  .home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 120px; height: 4px; background: rgba(0,0,0,0.3); border-radius: 3px; z-index: 10; }
+  .home-bar.light { background: rgba(255,255,255,0.3); }
+  .screen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .screen-body { flex: 1; overflow: hidden; padding: 0 20px; }
+  .top-bar { padding: 8px 4px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .top-bar .greeting-small { font-size: 13px; color: var(--text-2); }
+  .top-bar h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 26px; letter-spacing: -0.01em; margin-top: 2px; }
+  .icon-btn { width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--text); position: relative; }
+  .icon-btn .dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; border: 2px solid var(--surface); }
+  svg { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; }
+  .card.flat { background: transparent; border: none; padding: 0; }
+  .card.dark { background: var(--primary-grad); color: #DCEDE4; border-color: transparent; }
+  .card.accent { background: var(--accent-soft); border-color: transparent; }
+  .card.soft { background: var(--primary-soft); border-color: transparent; }
+  .card-row { display: flex; align-items: center; justify-content: space-between; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .stack-lg { display: flex; flex-direction: column; gap: 16px; }
+  .stack-sm { display: flex; flex-direction: column; gap: 8px; }
+  .tab-bar { flex-shrink: 0; margin: 8px 12px 0; height: 64px; background: var(--surface); border-radius: 22px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; box-shadow: 0 -4px 20px -8px rgba(0,0,0,0.06); padding-bottom: 6px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 8px; color: var(--text-3); font-size: 10px; font-weight: 500; letter-spacing: 0.02em; }
+  .tab.active { color: var(--primary); }
+  .tab.active svg { stroke: var(--primary); }
+  .tab svg { stroke: var(--text-3); }
+  .chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+  .chip.success { background: #E6F1EB; color: #1F5A40; }
+  .chip.progress { background: var(--primary-soft); color: var(--primary-ink); }
+  .chip.warn { background: var(--warn-soft); color: var(--warn); }
+  .chip.accent { background: var(--accent-soft); color: #8B3318; }
+  .chip.neutral { background: var(--surface-2); color: var(--text-2); }
+  .chip.dark { background: rgba(255,255,255,0.12); color: #DCEDE4; }
+  .chip .pulse { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 0 currentColor; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(15,76,58,0.4); } 70% { box-shadow: 0 0 0 6px rgba(15,76,58,0); } 100% { box-shadow: 0 0 0 0 rgba(15,76,58,0); } }
+  .btn { width: 100%; padding: 16px; border-radius: 18px; background: var(--primary); color: #fff; font-family: inherit; font-size: 15px; font-weight: 600; border: none; cursor: pointer; letter-spacing: 0.01em; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn.accent { background: var(--accent); }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+  .btn.dark { background: #fff; color: var(--primary-ink); }
+  .num { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+  .h-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+  .h-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.01em; }
+  .h-sub { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .h-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 1.5px; background: var(--border-strong); }
+  .timeline .step { position: relative; padding-bottom: 18px; }
+  .timeline .step::before { content: ''; position: absolute; left: -23px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border-strong); }
+  .timeline .step.done::before { background: var(--primary); border-color: var(--primary); }
+  .timeline .step.now::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .timeline .step .t { font-size: 14px; font-weight: 600; color: var(--text); }
+  .timeline .step .ts { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .timeline .step.pending .t { color: var(--text-3); font-weight: 500; }
+  .otp-row { display: flex; gap: 8px; justify-content: center; }
+  .otp-cell { width: 44px; height: 56px; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; }
+  .otp-cell.filled { border-color: var(--primary); }
+  .otp-cell.cursor { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+  .avatar { width: 36px; height: 36px; background: var(--primary-soft); color: var(--primary-ink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+  .splash { background: var(--primary-grad); color: #fff; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 80px 28px 36px; position: relative; overflow: hidden; }
+  .splash::before { content:''; position:absolute; top:-80px; right:-60px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%); }
+  .splash::after { content:''; position:absolute; bottom:-100px; left:-40px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(111,190,157,0.12), transparent 70%); }
+  .splash .logo-mark { width: 56px; height: 56px; border-radius: 18px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+  .splash h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; letter-spacing: -0.02em; line-height: 1.1; margin-top: 18px; position: relative; z-index: 1; }
+  .splash h2 em { font-style: italic; color: #6FBE9D; }
+  .splash p { font-size: 14px; color: rgba(255,255,255,0.65); margin-top: 18px; line-height: 1.55; max-width: 240px; position: relative; z-index: 1; }
+  .order-card { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 18px; position: relative; overflow: hidden; }
+  .order-card .stripe { position: absolute; left: 0; top: 18px; bottom: 18px; width: 3px; background: var(--primary); border-radius: 3px; }
+  .order-card.urgent .stripe { background: var(--accent); }
+  .order-card.done .stripe { background: var(--text-3); }
+  .order-card.warn .stripe { background: var(--warn); }
+  .prog { height: 4px; background: var(--surface-2); border-radius: 4px; overflow: hidden; margin-top: 12px; }
+  .prog > span { display: block; height: 100%; background: var(--primary); border-radius: 4px; }
+  .divider { height: 1px; background: var(--border); margin: 0; }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-radius: 28px 28px 0 0; box-shadow: 0 -20px 40px -10px rgba(0,0,0,0.18); padding: 22px 22px 32px; }
+  .sheet .grip { width: 36px; height: 4px; background: var(--border-strong); border-radius: 4px; margin: 0 auto 18px; }
+  .dim { position: absolute; inset: 0; background: rgba(8, 22, 18, 0.4); backdrop-filter: blur(2px); }
+  .biolock { width: 92px; height: 92px; border-radius: 50%; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto; position: relative; }
+  .biolock::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1.5px dashed var(--primary); opacity: 0.4; }
+  .code-display { font-family: 'Fraunces', serif; font-weight: 500; font-size: 44px; letter-spacing: 0.18em; color: var(--primary-ink); text-align: center; padding: 22px 0; background: linear-gradient(180deg, var(--primary-soft), transparent); border-radius: 18px; }
+  .bubble { padding: 12px 14px; border-radius: 18px; font-size: 14px; line-height: 1.5; max-width: 240px; }
+  .bubble.user { background: var(--primary); color: #fff; border-bottom-right-radius: 6px; align-self: flex-end; }
+  .bubble.ai { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 6px; }
+  .spark { height: 56px; width: 100%; background: linear-gradient(180deg, rgba(15,76,58,0.10), transparent); border-radius: 10px; position: relative; overflow: hidden; }
+  .spark::before { content: ''; position: absolute; top: 30px; left: 0; right: 0; border-top: 1.5px solid var(--primary); clip-path: polygon(0 60%, 12% 40%, 24% 70%, 38% 30%, 52% 50%, 64% 22%, 78% 44%, 90% 18%, 100% 32%, 100% 100%, 0 100%); }
+  .row { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
+  .row + .row { border-top: 1px solid var(--border); }
+  .row .row-meta { font-size: 12px; color: var(--text-3); }
+  .pill-nav { display: flex; gap: 6px; background: var(--surface-2); padding: 4px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+  .pill-nav span { flex: 1; padding: 7px 0; text-align: center; color: var(--text-2); border-radius: 100px; }
+  .pill-nav span.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+  .stepper-dots { display:flex; gap:6px; justify-content:center; padding:8px 0; }
+  .stepper-dots span { width:6px; height:6px; border-radius:50%; background:var(--border-strong); }
+  .stepper-dots span.active { width:20px; background:var(--primary); border-radius:6px; }
+  .hospital-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:var(--surface); border:1px solid var(--border); border-radius:100px; font-size:12px; font-weight:500; }
+  .hospital-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .empty-illustration { width:120px; height:120px; margin:32px auto 24px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--primary-soft) 0%, var(--surface-2) 70%); display:flex; align-items:center; justify-content:center; color:var(--primary); }
+  .data-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:13px; }
+  .data-row + .data-row { border-top:1px solid var(--border); }
+  .data-row .lbl { color:var(--text-2); }
+  .data-row .val { color:var(--text); font-weight:500; }
+  .toggle { width:42px; height:24px; background:var(--primary); border-radius:100px; position:relative; flex-shrink:0; }
+  .toggle::after { content:''; position:absolute; top:2px; right:2px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.off { background:var(--border-strong); }
+  .toggle.off::after { right:auto; left:2px; }
+  .receipt {
+    background:linear-gradient(180deg, var(--surface) 0%, var(--surface) 70%, transparent 100%);
+    border-radius:22px 22px 0 0;
+    border: 1px solid var(--border);
+    border-bottom:none;
+    padding:20px;
+    position:relative;
+  }
+  .receipt::after {
+    content:''; position:absolute; bottom:-10px; left:0; right:0; height:14px;
+    background:radial-gradient(circle at 7px 0, transparent 7px, var(--surface) 7px);
+    background-size:14px 14px; background-repeat:repeat-x;
+    border-bottom:1px solid var(--border);
+  }
+  .qr {
+    width:96px; height:96px;
+    background:
+      linear-gradient(90deg, var(--text) 50%, transparent 50%) 0 0/8px 8px,
+      linear-gradient(0deg, var(--text) 50%, transparent 50%) 0 0/8px 8px;
+    margin: 0 auto;
+    border-radius:8px;
+    border:2px solid var(--text);
+    background-color:#fff;
+  }
+</style>
+</head>
+<body>
+
+<div class="gallery-header">
+  <h1>Pisgah — Patient v2</h1>
+  <div class="sub">Every patient screen needed to ship. Direction unchanged from v1 (warm-clinical, evergreen + coral). Pushed further: gradient hero cards, NDPA-shaped privacy controls, multi-hospital home, every order state covered, claim flow redrawn without Worldcoin branding.</div>
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 01</div><h2>Auth · Onboarding · Claim</h2></div>
+<div class="grid">
+
+  <!-- 1. SPLASH -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>01</b> · Launch</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar light"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#fff"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#fff" stroke-width="1"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#fff"/></svg>
+      </div></div>
+      <div class="splash">
+        <div>
+          <div class="logo-mark"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <h2 style="position:relative;z-index:1;">Your care,<br/><em>in your pocket.</em></h2>
+          <p>Every test, prescription, and follow-up — from every hospital — in one place.</p>
+        </div>
+        <div class="stack" style="position:relative;z-index:1;">
+          <button class="btn dark">Continue</button>
+          <button class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.18)">I have a hospital link</button>
+        </div>
+      </div>
+      <div class="home-bar light"></div>
+    </div>
+  </div>
+
+  <!-- 2. WELCOME CAROUSEL -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>02</b> · Welcome · Step 2 / 3</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body" style="padding:8px 24px;display:flex;flex-direction:column;height:100%;">
+        <div style="display:flex;justify-content:space-between;padding:8px 0 32px;">
+          <span style="font-size:13px;color:var(--text-3);">2 of 3</span>
+          <span style="font-size:13px;color:var(--text-3);">Skip</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div class="empty-illustration" style="background:radial-gradient(circle at 30% 30%, var(--accent-soft) 0%, var(--surface-2) 70%);color:var(--accent);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-0.02em;line-height:1.15;text-align:center;">No more chasing<br/>your results.</h2>
+          <p class="h-sub" style="text-align:center;margin-top:14px;max-width:260px;margin-left:auto;margin-right:auto;">When your test is ready, we tell you. When the doctor signs your plan, you see it.</p>
+        </div>
+        <div class="stepper-dots" style="margin-bottom:20px;">
+          <span></span><span class="active"></span><span></span>
+        </div>
+        <button class="btn" style="margin-bottom:20px;">Next</button>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 3. SIGN IN PHONE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>03</b> · Sign in · Phone</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body" style="padding:8px 24px;">
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 0 28px;color:var(--text-2);font-size:14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Back</div>
+        <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:28px;letter-spacing:-0.01em;line-height:1.2;">Welcome.<br/>What's your number?</h1>
+        <p class="h-sub" style="margin-top:10px;">We'll text you a 6-digit code. Standard rates apply.</p>
+        <div style="margin-top:36px;">
+          <div class="h-eyebrow" style="margin-bottom:8px;">Mobile</div>
+          <div style="display:flex;align-items:center;gap:10px;border:1px solid var(--border-strong);border-radius:16px;padding:14px 16px;background:var(--surface);">
+            <span style="font-size:15px;font-weight:500;color:var(--text);">🇳🇬 +234</span>
+            <div style="width:1px;height:18px;background:var(--border-strong);"></div>
+            <span class="num" style="font-size:18px;font-weight:500;letter-spacing:0.01em;">803 ▎</span>
+          </div>
+          <p class="h-sub" style="margin-top:10px;">Use the number you gave at the hospital.</p>
+        </div>
+        <button class="btn" style="margin-top:36px;">Send code</button>
+        <button class="btn ghost" style="margin-top:10px;">Use email instead</button>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 4. OTP VERIFY -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>04</b> · Verify code</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body" style="padding:8px 24px;">
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 0 28px;color:var(--text-2);font-size:14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Edit number</div>
+        <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:28px;letter-spacing:-0.01em;">Check your texts</h1>
+        <p class="h-sub" style="margin-top:10px;">Sent to <span style="color:var(--text);font-weight:500;">+234 803 •••• 1247</span></p>
+        <div class="otp-row" style="margin-top:44px;">
+          <div class="otp-cell filled">4</div><div class="otp-cell filled">8</div><div class="otp-cell filled">2</div>
+          <div class="otp-cell cursor"></div><div class="otp-cell"></div><div class="otp-cell"></div>
+        </div>
+        <div style="text-align:center;margin-top:28px;"><p class="h-sub">Didn't get it?</p><p style="font-size:13px;color:var(--text-3);margin-top:4px;">Resend in <span class="num" style="color:var(--text-2);font-weight:500;">0:23</span></p></div>
+        <div class="card" style="margin-top:32px;background:var(--surface-2);border-color:transparent;display:flex;align-items:flex-start;gap:10px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2" stroke-linecap="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><div class="h-sub">Pisgah will never ask for this code.</div></div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 5. EMAIL OTP ALT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>05</b> · Sign in · Email</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body" style="padding:8px 24px;">
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 0 28px;color:var(--text-2);font-size:14px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Back</div>
+        <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:28px;letter-spacing:-0.01em;line-height:1.2;">Sign in<br/>with email</h1>
+        <p class="h-sub" style="margin-top:10px;">Use the email your hospital has for you.</p>
+        <div style="margin-top:36px;">
+          <div class="h-eyebrow" style="margin-bottom:8px;">Email</div>
+          <div style="display:flex;align-items:center;gap:10px;border:1px solid var(--primary);border-radius:16px;padding:14px 16px;background:var(--surface);box-shadow:0 0 0 3px var(--primary-soft);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span style="font-size:15px;color:var(--text);">edikan.okon@gmail.com ▎</span>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:36px;">Send code</button>
+        <button class="btn ghost" style="margin-top:10px;">Use phone number instead</button>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 6. PERMISSIONS -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>06</b> · Permissions</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body stack" style="padding:8px 24px;">
+        <div style="padding:24px 0 8px;">
+          <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;">Two quick<br/>permissions</h1>
+          <p class="h-sub" style="margin-top:10px;">You can change these anytime in Settings.</p>
+        </div>
+
+        <div class="card" style="padding:18px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:44px;height:44px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:15px;">Notifications</div>
+              <div class="h-sub" style="margin-top:2px;">Result ready · medication reminders · delivery codes</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:18px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:44px;height:44px;border-radius:14px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:#8B3318;flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11h.01M17 11h.01M7 11h.01M7 15h.01M12 15h.01M17 15h.01"/><path d="M5 21V8a2 2 0 0 1 2-2h2M19 21V8a2 2 0 0 0-2-2h-2M9 6V4a3 3 0 0 1 6 0v2M3 21h18"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:15px;">Face ID unlock</div>
+              <div class="h-sub" style="margin-top:2px;">Protects your results and prescriptions</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+
+        <div class="card soft" style="display:flex;gap:10px;padding:14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-ink)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div style="font-size:13px;color:var(--primary-ink);line-height:1.5;">Your data is encrypted on Pisgah's servers and only you can unlock sensitive details.</div>
+        </div>
+
+        <button class="btn" style="margin-top:auto;">Continue</button>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 7. CLAIM FLOW -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>07</b> · Hospital link · Claim</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen-body stack" style="padding:8px 24px;">
+        <div style="padding:20px 0 8px;">
+          <span class="chip success">From: Lagoon Clinic</span>
+          <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;margin-top:14px;">Edikan, your test<br/>is ready.</h1>
+          <p class="h-sub" style="margin-top:10px;">Connect this device to your record so we can show you results now and from your next visit too.</p>
+        </div>
+
+        <div class="card" style="padding:18px;">
+          <div class="h-eyebrow" style="margin-bottom:14px;">You'll see</div>
+          <div class="stack-sm">
+            <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Your malaria + typhoid result</div>
+            <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Your prescription delivery code</div>
+            <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Notes from Dr. Adeyemi</div>
+          </div>
+        </div>
+
+        <div class="card soft" style="display:flex;gap:10px;padding:14px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-ink)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div style="font-size:12px;color:var(--primary-ink);line-height:1.5;">We'll send a code to <b>+234 803 •••• 1247</b> to confirm.</div>
+        </div>
+
+        <button class="btn" style="margin-top:auto;">Connect</button>
+        <button class="btn ghost">Not me</button>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 02</div><h2>Home · Multi-hospital · Empty</h2></div>
+<div class="grid">
+
+  <!-- 8. HOME ACTIVE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>08</b> · Home · Active care</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><div class="greeting-small">Good evening,</div><h1>Edikan</h1></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="dot"></span></button>
+        </div>
+
+        <div style="padding:0 20px 16px;display:flex;gap:8px;overflow-x:auto;">
+          <span class="hospital-chip active">All hospitals</span>
+          <span class="hospital-chip">Lagoon · 2</span>
+          <span class="hospital-chip">UCH Ibadan · 1</span>
+        </div>
+
+        <div class="screen-body stack" style="overflow:visible;">
+          <div class="order-card">
+            <div class="stripe"></div>
+            <div class="card-row"><span class="chip progress"><span class="pulse"></span>Result ready</span><span style="font-size:12px;color:var(--text-3);">Lagoon · today</span></div>
+            <div style="margin-top:14px;"><div class="h-title">Malaria + Typhoid</div><div class="h-sub" style="margin-top:2px;">Dr. Adeyemi · 3:42 PM</div></div>
+            <div class="prog"><span style="width:78%"></span></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">Lab done · awaiting unlock</div>
+          </div>
+
+          <div class="order-card urgent">
+            <div class="stripe"></div>
+            <div class="card-row"><span class="chip accent">Rider arriving</span><span style="font-size:12px;color:var(--text-3);">~6 min</span></div>
+            <div style="margin-top:14px;"><div class="h-title">Coartem + Paracetamol</div><div class="h-sub" style="margin-top:2px;">Lagoon Pharmacy · 3 items</div></div>
+          </div>
+
+          <div class="h-eyebrow" style="padding-top:8px;">Recent</div>
+          <div class="order-card done">
+            <div class="stripe"></div>
+            <div class="card-row"><span class="chip neutral">Completed</span><span style="font-size:12px;color:var(--text-3);">May 4</span></div>
+            <div style="margin-top:10px;"><div style="font-weight:600;font-size:15px;">Blood Pressure Check</div><div class="h-sub" style="margin-top:2px;">Lagoon Clinic</div></div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 9. HOME EMPTY -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>09</b> · Home · First time</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><div class="greeting-small">Good morning,</div><h1>Edikan</h1></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button>
+        </div>
+        <div class="screen-body" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:visible;">
+          <div class="empty-illustration">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </div>
+          <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;">Nothing here yet.</h2>
+          <p class="h-sub" style="margin-top:8px;max-width:240px;line-height:1.55;">When a Pisgah hospital orders a test for you, it'll show up here.</p>
+          <div class="card" style="margin-top:32px;text-align:left;width:100%;padding:14px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="margin-top:2px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div><div style="font-weight:600;font-size:13px;">Looking for a past test?</div><div class="h-sub" style="margin-top:2px;font-size:12px;">Ask the hospital to send you a link or scan their QR.</div></div></div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 10. NOTIFICATIONS -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>10</b> · Inbox</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 14px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:18px;">Inbox</h1>
+          <span style="font-size:13px;color:var(--primary);font-weight:500;">Mark read</span>
+        </div>
+        <div class="screen-body stack-sm" style="overflow:visible;">
+          <div class="h-eyebrow" style="padding:4px 0;">New</div>
+          <div class="card" style="position:relative;padding:14px 16px;">
+            <div style="position:absolute;left:6px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--accent);border-radius:50%;"></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:36px;height:36px;border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Your test result is ready</div><div class="h-sub" style="margin-top:2px;">Malaria + Typhoid — Dr. Adeyemi</div><div style="font-size:11px;color:var(--text-3);margin-top:6px;">2 min ago</div></div>
+            </div>
+          </div>
+          <div class="card" style="position:relative;padding:14px 16px;">
+            <div style="position:absolute;left:6px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--accent);border-radius:50%;"></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:36px;height:36px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#8B3318;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Bashir is on the way</div><div class="h-sub" style="margin-top:2px;">Coartem · 6 minutes away</div><div style="font-size:11px;color:var(--text-3);margin-top:6px;">12 min ago</div></div>
+            </div>
+          </div>
+          <div class="h-eyebrow" style="padding:14px 0 4px;">Earlier</div>
+          <div class="card" style="padding:14px 16px;opacity:0.85;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <div style="width:36px;height:36px;border-radius:12px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-2);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div style="flex:1;"><div style="font-weight:500;font-size:14px;">Time for your evening dose</div><div class="h-sub" style="margin-top:2px;">Coartem · with food</div><div style="font-size:11px;color:var(--text-3);margin-top:6px;">Yesterday · 8:00 PM</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 03</div><h2>Order states · Payment · Lab · Review</h2></div>
+<div class="grid">
+
+  <!-- 11. ORDER · AWAITING PAYMENT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>11</b> · Order · Awaiting payment</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Order · MAL-2479</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip warn">Payment needed</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;margin-top:10px;">Malaria + Typhoid panel</h1>
+            <p class="h-sub" style="margin-top:6px;">Dr. Adeyemi · Lagoon Clinic</p>
+          </div>
+
+          <div class="card">
+            <div class="data-row"><span class="lbl">Malaria RDT</span><span class="val num">₦2,500</span></div>
+            <div class="data-row"><span class="lbl">Typhoid Widal</span><span class="val num">₦2,000</span></div>
+            <div class="data-row" style="border-top:1.5px solid var(--text);"><span class="lbl" style="font-weight:600;color:var(--text);">Total</span><span class="val num" style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;">₦4,500</span></div>
+          </div>
+
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:12px;">How you'll pay</div>
+            <div class="stack-sm">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px;border:1.5px solid var(--primary);border-radius:14px;background:var(--primary-soft);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <div style="flex:1;"><div style="font-weight:600;font-size:14px;color:var(--primary-ink);">Pay at the counter</div><div style="font-size:12px;color:var(--primary-ink);opacity:0.7;">Cash, POS, or transfer</div></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:14px;background:var(--surface);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+                <div style="flex:1;"><div style="font-weight:500;font-size:14px;">Pay in-app</div><div style="font-size:12px;color:var(--text-3);">Card · transfer</div></div>
+                <span style="font-size:11px;background:var(--surface-2);padding:3px 8px;border-radius:6px;color:var(--text-3);">Soon</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="h-sub" style="text-align:center;font-size:12px;">Show your Pisgah ID at the counter: <span class="num" style="color:var(--text);font-weight:600;">LGH-0000124</span></p>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 12. ORDER · IN PROGRESS -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>12</b> · Order · Lab running</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Order · MAL-2479</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip progress"><span class="pulse"></span>Sample being processed</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;margin-top:10px;">Malaria + Typhoid panel</h1>
+            <p class="h-sub" style="margin-top:6px;">Lagoon Diagnostics · started 4:14 PM</p>
+          </div>
+          <div class="card">
+            <div class="timeline">
+              <div class="step done"><div class="t">Order placed</div><div class="ts">Dr. Adeyemi · 3:42 PM</div></div>
+              <div class="step done"><div class="t">Payment confirmed</div><div class="ts">Cash · ₦4,500 · 3:51 PM</div></div>
+              <div class="step done"><div class="t">Sample collected</div><div class="ts">Lab tech · 4:08 PM</div></div>
+              <div class="step now"><div class="t">Running lab</div><div class="ts">est. 25 min</div></div>
+              <div class="step pending"><div class="t">Doctor review</div></div>
+              <div class="step pending"><div class="t">Result released</div></div>
+            </div>
+          </div>
+          <div class="card soft" style="display:flex;gap:12px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-ink)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg><div><div style="font-weight:600;color:var(--primary-ink);font-size:14px;">We'll buzz when it's ready</div><div style="font-size:13px;color:var(--primary-ink);opacity:0.7;margin-top:2px;">No need to wait here.</div></div></div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 13. ORDER · LOCKED RESULT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>13</b> · Order · Locked result</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Order · MAL-2479</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip progress"><span class="pulse"></span>Ready to view</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;margin-top:10px;">Malaria + Typhoid panel</h1>
+            <p class="h-sub" style="margin-top:6px;">Dr. Adeyemi · today, 4:52 PM</p>
+          </div>
+          <div class="card" style="text-align:center;padding:32px 22px;background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);">
+            <div class="biolock" style="width:64px;height:64px;margin-bottom:16px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3 style="font-family:'Fraunces',serif;font-weight:500;font-size:20px;letter-spacing:-0.01em;">Your result is private</h3>
+            <p class="h-sub" style="margin-top:8px;max-width:240px;margin-left:auto;margin-right:auto;font-size:13px;">Use Face ID to unlock. Only you can see what's inside.</p>
+            <button class="btn" style="margin-top:20px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M5 8V6a2 2 0 0 1 2-2M19 8V6a2 2 0 0 0-2-2M5 16v2a2 2 0 0 0 2 2M19 16v2a2 2 0 0 1-2 2"/><path d="M8 11v2M16 11v2M9 16h6"/></svg>
+              Unlock with Face ID
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--text-3);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            End-to-end encrypted · NDPA compliant
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 14. IDENTITY UNLOCK SHEET -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>14</b> · Unlock · Sheet</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="background:rgba(245,245,240,0.4);">
+        <div class="screen-body" style="opacity:0.35;pointer-events:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg><span style="font-size:13px;color:var(--text-3);">MAL-2479</span></div>
+          <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;">Malaria + Typhoid</h1>
+          <div style="margin-top:12px;height:120px;background:#fff;border-radius:18px;border:1px solid var(--border);"></div>
+        </div>
+        <div class="dim"></div>
+        <div class="sheet">
+          <div class="grip"></div>
+          <div style="text-align:center;">
+            <div class="biolock"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 11h.01M17 11h.01M7 11h.01M7 15h.01M12 15h.01M17 15h.01"/><path d="M5 21V8a2 2 0 0 1 2-2h2M19 21V8a2 2 0 0 0-2-2h-2M9 6V4a3 3 0 0 1 6 0v2M3 21h18"/></svg></div>
+            <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;margin-top:22px;">Confirm it's you</h2>
+            <p class="h-sub" style="margin-top:8px;max-width:240px;margin-left:auto;margin-right:auto;">View your result and Dr. Adeyemi's care plan.</p>
+          </div>
+          <div class="stack" style="margin-top:28px;">
+            <button class="btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8V6a2 2 0 0 1 2-2M19 8V6a2 2 0 0 0-2-2M5 16v2a2 2 0 0 0 2 2M19 16v2a2 2 0 0 1-2 2"/><path d="M8 11v2M16 11v2M9 16h6"/></svg>Use Face ID</button>
+            <button class="btn ghost">Use 6-digit PIN</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:18px;font-size:11px;color:var(--text-3);"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>End-to-end encrypted · NDPA compliant</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 15. ORDER UNLOCKED -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>15</b> · Order · Result + plan</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Order · MAL-2479</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip success">Result released</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;line-height:1.2;margin-top:10px;">Malaria + Typhoid</h1>
+            <p class="h-sub" style="margin-top:6px;">Dr. Adeyemi · today, 4:52 PM</p>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:10px;">What the doctor says</div>
+            <p class="h-body" style="line-height:1.6;">You have <b>uncomplicated malaria</b> (P. falciparum, mild). Typhoid is <b>negative</b>. Start medication today, drink fluids, rest.</p>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+              <div class="avatar">OA</div>
+              <div><div style="font-size:13px;font-weight:600;">Dr. Olamide Adeyemi</div><div style="font-size:12px;color:var(--text-3);">Lagoon Clinic · MDCN-049182</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-row"><div class="h-eyebrow">Your care plan</div><span class="chip neutral" style="font-size:10px;">3 steps</span></div>
+            <div class="stack-sm" style="margin-top:14px;">
+              <div style="display:flex;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div class="h-body">Coartem twice daily for 3 days. With food.</div></div>
+              <div style="display:flex;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div class="h-body">Paracetamol if fever > 38°C, max 4× per day.</div></div>
+              <div style="display:flex;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div class="h-body">Return if fever persists past 48 hours.</div></div>
+            </div>
+          </div>
+          <button class="btn accent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/></svg>Get my prescription</button>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 04</div><h2>Prescription · Delivery · Confirmation</h2></div>
+<div class="grid">
+
+  <!-- 16. PRESCRIPTION CODE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>16</b> · Prescription · Code</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Prescription</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip accent">Show to your rider</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;margin-top:10px;">Your delivery code</h1>
+          </div>
+          <div class="card" style="padding:8px;">
+            <div class="code-display num">8 · 4 · 2 · 9 · 1 · 7</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 0 6px;font-size:12px;color:var(--text-3);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Code expires in <span class="num" style="color:var(--text);font-weight:600;">4:47</span></div>
+          </div>
+          <div class="card">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="width:38px;height:38px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#8B3318;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg></div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Bashir Ndubuisi</div><div style="font-size:12px;color:var(--text-3);margin-top:2px;">Rider · 0.8 km away · ~6 min</div></div>
+              <button class="icon-btn" style="background:var(--primary);border:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+            </div>
+          </div>
+          <div class="h-sub" style="text-align:center;line-height:1.5;padding:0 16px;font-size:12px;">Give this code only when your package is in your hand.</div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 17. CONFIRM RECEIPT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>17</b> · Confirm delivery</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Prescription</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div style="text-align:center;padding:8px 0;">
+            <div class="biolock" style="background:#E6F1EB;color:var(--success);width:80px;height:80px;">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;margin-top:18px;">Got it?</h2>
+            <p class="h-sub" style="margin-top:8px;">Bashir says you have it. Confirm so we can close this delivery.</p>
+          </div>
+          <div class="card">
+            <div class="data-row"><span class="lbl">Items</span><span class="val">3 medications</span></div>
+            <div class="data-row"><span class="lbl">Delivered by</span><span class="val">Bashir N.</span></div>
+            <div class="data-row"><span class="lbl">Delivered at</span><span class="val num">4:58 PM</span></div>
+          </div>
+          <button class="btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Yes, I have my meds</button>
+          <button class="btn ghost">Something's wrong</button>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 18. POST-COMPLETION SURVEY -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>18</b> · Survey · Post visit</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <span></span>
+          <span style="font-size:13px;color:var(--text-3);">Quick feedback</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;line-height:1.2;">How was Lagoon Clinic today?</h1>
+            <p class="h-sub" style="margin-top:10px;">30 seconds. Helps your hospital get better.</p>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:14px;">Overall</div>
+            <div style="display:flex;justify-content:space-between;gap:6px;">
+              <div style="flex:1;text-align:center;padding:12px 4px;border:1px solid var(--border);border-radius:14px;font-size:22px;">😞</div>
+              <div style="flex:1;text-align:center;padding:12px 4px;border:1px solid var(--border);border-radius:14px;font-size:22px;">😕</div>
+              <div style="flex:1;text-align:center;padding:12px 4px;border:1.5px solid var(--primary);background:var(--primary-soft);border-radius:14px;font-size:22px;">😊</div>
+              <div style="flex:1;text-align:center;padding:12px 4px;border:1px solid var(--border);border-radius:14px;font-size:22px;">🤩</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:14px;">Did anything stand out?</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Fast service</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;background:var(--primary-soft);color:var(--primary-ink);">Kind staff</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Clean</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Long wait</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Confusing</span>
+            </div>
+          </div>
+          <div class="card" style="padding:14px 16px;background:var(--surface-2);">
+            <div class="h-sub" style="font-size:12px;">Anything you'd tell us privately?</div>
+            <p style="font-size:13px;color:var(--text-3);margin-top:6px;">Type a note…</p>
+          </div>
+          <button class="btn">Send feedback</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 19. RECORD IMPORT CONSENT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>19</b> · Cross-hospital consent</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;padding:8px 20px 16px;">
+          <span style="font-size:13px;color:var(--text-3);">From: UCH Ibadan</span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip warn">Consent needed</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;line-height:1.2;margin-top:14px;">UCH Ibadan wants to see your Lagoon records</h1>
+            <p class="h-sub" style="margin-top:10px;">Dr. Bello at UCH needs your test history from Lagoon to plan your treatment.</p>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:12px;">They'll see</div>
+            <div class="stack-sm">
+              <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Past test results (12)</div>
+              <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/></svg>Prescriptions issued (5)</div>
+              <div style="display:flex;gap:10px;align-items:center;font-size:14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Visit notes (8)</div>
+            </div>
+          </div>
+          <div class="card" style="background:var(--surface-2);border-color:transparent;">
+            <div style="font-size:12px;color:var(--text-2);line-height:1.55;">You can revoke this any time. UCH will be told you did, but they won't be able to see anything you import again unless you give consent again.</div>
+          </div>
+          <button class="btn">Allow access</button>
+          <button class="btn ghost" style="color:var(--danger);border-color:var(--danger);">Deny</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 05</div><h2>History · Visit detail · AI</h2></div>
+<div class="grid">
+
+  <!-- 20. HISTORY -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>20</b> · History · All visits</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><h1>Your history</h1><div class="h-sub" style="margin-top:2px;">3 hospitals · 14 visits</div></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;">
+          <div class="pill-nav"><span class="active">All</span><span>Tests</span><span>Rx</span><span>Visits</span></div>
+          <div class="card flat">
+            <div class="h-eyebrow" style="margin-bottom:10px;">This month</div>
+            <div class="card" style="padding:14px 16px;"><div class="card-row"><div><div style="font-weight:600;font-size:14px;">Malaria + Typhoid</div><div class="h-sub" style="margin-top:2px;">Lagoon Clinic · 12 May</div></div><span class="chip progress">Active</span></div></div>
+            <div class="card" style="padding:14px 16px;margin-top:8px;"><div class="card-row"><div><div style="font-weight:600;font-size:14px;">Blood Pressure check</div><div class="h-sub" style="margin-top:2px;">Lagoon Clinic · 4 May</div></div><span class="chip neutral">Done</span></div></div>
+          </div>
+          <div class="card flat">
+            <div class="h-eyebrow" style="margin-bottom:10px;">April</div>
+            <div class="card" style="padding:14px 16px;"><div class="card-row"><div><div style="font-weight:600;font-size:14px;">Fasting Blood Sugar</div><div class="h-sub" style="margin-top:2px;">UCH Ibadan · 28 Apr</div></div><span class="chip neutral">Done</span></div><div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--text-2);"><span class="num" style="color:var(--text);font-weight:600;">98 mg/dL</span> · Normal range</div></div>
+            <div class="card" style="padding:14px 16px;margin-top:8px;"><div class="card-row"><div><div style="font-weight:600;font-size:14px;">Coartem Antimalarial</div><div class="h-sub" style="margin-top:2px;">Lagoon Pharmacy · 12 Apr</div></div><span class="chip neutral">Delivered</span></div></div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 21. VISIT DETAIL -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>21</b> · Visit · Full encounter</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Visit · 12 May</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <span class="chip success">Completed</span>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;line-height:1.2;margin-top:10px;">Visit at Lagoon Clinic</h1>
+            <p class="h-sub" style="margin-top:6px;">12 May 2026 · 3:30 PM — 5:24 PM</p>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:10px;">Vitals on arrival</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;" class="num">122<span style="font-size:12px;color:var(--text-3);">/82</span></div><div style="font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">BP mmHg</div></div>
+              <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;" class="num">37.8°<span style="font-size:12px;color:var(--accent);">↑</span></div><div style="font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">Temp</div></div>
+              <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;" class="num">78</div><div style="font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">Pulse</div></div>
+              <div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:500;" class="num">98%</div><div style="font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">SpO₂</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:10px;">Tests done</div>
+            <div class="stack-sm">
+              <div class="card-row" style="padding:6px 0;"><div style="font-size:14px;font-weight:500;">Malaria RDT</div><span style="font-size:12px;color:var(--danger);font-weight:600;">Positive</span></div>
+              <div class="card-row" style="padding:6px 0;border-top:1px solid var(--border);"><div style="font-size:14px;font-weight:500;">Typhoid Widal</div><span style="font-size:12px;color:var(--success);font-weight:600;">Negative</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:10px;">Prescription</div>
+            <div class="stack-sm">
+              <div class="data-row" style="padding:8px 0;"><span class="lbl">Coartem 80/480mg</span><span class="val">2× / day · 3 days</span></div>
+              <div class="data-row" style="padding:8px 0;"><span class="lbl">Paracetamol 500mg</span><span class="val">PRN, max 4×</span></div>
+            </div>
+          </div>
+          <div class="card flat" style="display:flex;gap:8px;">
+            <button class="btn ghost" style="font-size:13px;padding:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share</button>
+            <button class="btn ghost" style="font-size:13px;padding:12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h7v6"/><path d="M20 10h-7V4"/><path d="m5 13 5-5"/><path d="M14 16h6"/></svg>Print</button>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 22. ASK PISGAH AI -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>22</b> · Ask Pisgah · Health AI</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 14px;"><div><div class="greeting-small">Pisgah AI</div><h1>Ask about your health</h1></div></div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:14px;">
+          <div class="card dark">
+            <div style="display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Trend spotted</div>
+            <p class="h-body" style="color:#DCEDE4;margin-top:10px;">Your blood pressure has been trending up over your last 3 visits.</p>
+            <div class="spark" style="margin-top:12px;"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:rgba(220,237,228,0.6);"><span>Feb</span><span>Mar</span><span>Apr</span><span class="num" style="color:#6FBE9D;font-weight:600;">142/94</span></div>
+          </div>
+          <div class="stack-sm">
+            <div class="bubble user" style="align-self:flex-end;">What does my malaria test mean?</div>
+            <div class="bubble ai">Your test showed <b>P. falciparum</b>, the most common malaria strain in Nigeria. Dr. Adeyemi caught it early — Coartem clears it in 3 days for most people. Watch for fever returning after day 5.
+              <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-3);letter-spacing:0.04em;text-transform:uppercase;font-weight:600;">From: Dr. Adeyemi's note · today</div>
+            </div>
+          </div>
+          <div class="stack-sm">
+            <div class="h-eyebrow">Suggested</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Am I due for any test?</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Explain my BP trend</span>
+              <span class="chip neutral" style="padding:8px 12px;font-weight:500;">Side effects of Coartem</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 20px 8px;">
+          <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:12px 14px;">
+            <span style="font-size:14px;color:var(--text-3);flex:1;">Ask anything about your care…</span>
+            <button class="icon-btn" style="background:var(--primary);border:none;width:32px;height:32px;border-radius:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================== -->
+<div class="section-header"><div class="sub">Section 06</div><h2>Profile · Privacy · Next of kin · Support</h2></div>
+<div class="grid">
+
+  <!-- 23. PROFILE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>23</b> · You · Profile</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 18px;"><h1>You</h1><button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
+        <div class="screen-body stack" style="overflow:visible;">
+          <div class="card dark" style="padding:22px 20px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Fraunces',serif;font-size:22px;font-weight:500;">E</div>
+              <div><div style="font-family:'Fraunces',serif;font-size:20px;color:#fff;font-weight:500;">Edikan Okon</div><div style="font-size:12px;color:rgba(220,237,228,0.7);margin-top:2px;">Pisgah ID · <span class="num">LGH-0000124</span></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-around;margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.1);">
+              <div style="text-align:center;"><div class="num" style="font-family:'Fraunces',serif;font-size:22px;color:#fff;">14</div><div style="font-size:11px;color:rgba(220,237,228,0.6);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;">Visits</div></div>
+              <div style="text-align:center;"><div class="num" style="font-family:'Fraunces',serif;font-size:22px;color:#fff;">3</div><div style="font-size:11px;color:rgba(220,237,228,0.6);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;">Hospitals</div></div>
+              <div style="text-align:center;"><div class="num" style="font-family:'Fraunces',serif;font-size:22px;color:#fff;">26</div><div style="font-size:11px;color:rgba(220,237,228,0.6);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;">Records</div></div>
+            </div>
+          </div>
+          <div class="card" style="padding:6px 16px;">
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Next of kin</div><div class="row-meta">Aniekan Okon · Brother</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:#8B3318;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Privacy & data</div><div class="row-meta">Download · Erase</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Notifications</div><div class="row-meta">Push, SMS, WhatsApp</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Get help</div><div class="row-meta">Talk to a Pisgah agent</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--text-3);padding:8px 0;letter-spacing:0.04em;">Pisgah v1.0.0 · made in 🇳🇬</div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>History</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>Ask Pisgah</div>
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 24. PISGAH ID / SHARE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>24</b> · Your Pisgah ID</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;background:var(--surface-2);">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 24px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Pisgah ID</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+        </div>
+
+        <div style="padding:0 20px;">
+          <div class="card dark" style="padding:22px;text-align:center;">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6FBE9D;">Pisgah ID</div>
+            <div class="num" style="font-family:'Fraunces',serif;font-size:34px;font-weight:500;color:#fff;letter-spacing:0.04em;margin-top:8px;">LGH-0000124</div>
+            <div style="font-size:13px;color:rgba(220,237,228,0.7);margin-top:8px;">Edikan Okon</div>
+            <div style="background:#fff;padding:14px;border-radius:14px;margin-top:22px;display:flex;justify-content:center;">
+              <div class="qr"></div>
+            </div>
+            <div style="font-size:11px;color:rgba(220,237,228,0.6);margin-top:14px;line-height:1.5;">Show this at any Pisgah hospital to be recognised instantly.</div>
+          </div>
+        </div>
+
+        <div style="padding:18px 20px 0;">
+          <button class="btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share with hospital</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 25. PRIVACY & DATA -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>25</b> · Privacy · Your data</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Privacy & data</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:12px;">
+          <div>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;">It's your data.</h1>
+            <p class="h-sub" style="margin-top:8px;">You can see who accessed it, download a copy, or ask us to delete it. Protected under NDPA 2023.</p>
+          </div>
+          <div class="card" style="padding:6px 16px;">
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15" transform="rotate(180 12 8.5)"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Download my records</div><div class="row-meta">All visits · PDF + raw data</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Who has seen my data</div><div class="row-meta">14 staff over 8 visits</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Active consents</div><div class="row-meta">3 hospitals · 2 cross-shares</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </div>
+          <div class="card" style="background:#FCEDED;border-color:transparent;padding:16px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div><div style="font-weight:600;font-size:13px;color:var(--danger);">Erase my data</div><div class="h-sub" style="margin-top:4px;font-size:12px;color:var(--danger);opacity:0.85;">Permanent. We'll keep only what the law requires us to.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 26. SUPPORT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>26</b> · Get help · Support</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Get help</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <div>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;">How can we help?</h1>
+            <p class="h-sub" style="margin-top:8px;">A real Pisgah teammate replies, not a bot.</p>
+          </div>
+          <div class="card" style="padding:14px;">
+            <div class="h-eyebrow" style="margin-bottom:12px;">Common questions</div>
+            <div class="stack-sm">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);"><span style="font-size:14px;">Why is my result locked?</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);"><span style="font-size:14px;">How do I pay for a test?</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;"><span style="font-size:14px;">Rider hasn't arrived</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            </div>
+          </div>
+          <div class="stack-sm" style="margin-top:auto;">
+            <button class="btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Start a chat</button>
+            <button class="btn ghost"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call us</button>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:880px;margin:96px auto 24px;text-align:center;font-size:12px;color:#6E6E68;letter-spacing:0.06em;">
+  PISGAH MOBILE · PATIENT V2 · 26 SCREENS · MAY 2026 · Static HTML mock — no real data, no real interactions.
+</div>
+
+</body>
+</html>
