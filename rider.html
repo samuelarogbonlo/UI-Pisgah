@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pisgah Mobile — Rider v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg-gallery:#1A1A18;--bg:#FAFAF6;--surface:#FFFFFF;--surface-2:#F4F4EE;--border:#EDEDE6;--border-strong:#DCDCD3;--text:#0A0A0A;--text-2:#5E5E5A;--text-3:#9B9B95;--primary:#0F4C3A;--primary-soft:#E6EFEA;--primary-ink:#0A2F25;--primary-grad:linear-gradient(135deg,#0F4C3A 0%,#1A6B53 100%);--accent:#E0573D;--accent-soft:#FCEDE7;--warn:#B7791F;--warn-soft:#FBF1DD;--danger:#B23A48;--danger-soft:#FCEDED;--success:#2E7D5B;--info:#2C5282;--info-soft:#E1ECF7;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:'Inter',sans-serif}
+  body{background:var(--bg-gallery);color:#E4E4E0;min-height:100vh;padding:64px 32px 96px;-webkit-font-smoothing:antialiased}
+  .gallery-header{max-width:1280px;margin:0 auto 56px}
+  .gallery-header h1{font-family:'Fraunces',serif;font-weight:500;font-size:44px;letter-spacing:-0.02em;color:#FAFAF6;margin-bottom:12px}
+  .gallery-header .sub{font-size:15px;color:#8C8C84;max-width:720px;line-height:1.55}
+  .legend{margin-top:20px;display:flex;gap:16px;font-size:12px;color:#A0A099}
+  .legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,320px);gap:72px 40px;max-width:1500px;margin:0 auto;justify-content:center}
+  .frame-wrap{display:flex;flex-direction:column;align-items:center}
+  .frame-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#6E6E68;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .frame-label b{color:#C7C7BE;font-weight:600}
+  .frame-label .status{font-size:10px;padding:2px 8px;border-radius:100px}
+  .frame-label .live{background:rgba(46,125,91,0.18);color:#7FBE9E}
+  .frame-label .build{background:rgba(224,87,61,0.18);color:#E89A87}
+  .phone{width:320px;height:690px;background:var(--bg);border-radius:44px;box-shadow:0 0 0 8px #2B2B27,0 0 0 9px #3A3A35,0 30px 60px -20px rgba(0,0,0,0.6),0 12px 32px -8px rgba(0,0,0,0.4);overflow:hidden;position:relative;color:var(--text);display:flex;flex-direction:column}
+  .status-bar{height:44px;padding:14px 24px 0;display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+  .status-icons{display:flex;gap:6px;align-items:center}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#0A0A0A;border-radius:18px;z-index:10}
+  .home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(0,0,0,0.3);border-radius:3px;z-index:10}
+  .screen{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .screen-body{flex:1;overflow:hidden;padding:0 20px}
+  .top-bar{padding:8px 4px 20px;display:flex;align-items:center;justify-content:space-between}
+  .top-bar .greeting-small{font-size:13px;color:var(--text-2)}
+  .top-bar h1{font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;margin-top:2px}
+  .icon-btn{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--text);position:relative}
+  svg{display:block}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:16px}
+  .card.dark{background:var(--primary-grad);color:#DCEDE4;border-color:transparent}
+  .card.accent{background:var(--accent-soft);border-color:transparent}
+  .card.soft{background:var(--primary-soft);border-color:transparent}
+  .card-row{display:flex;align-items:center;justify-content:space-between}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .stack-sm{display:flex;flex-direction:column;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600}
+  .chip.success{background:#E6F1EB;color:#1F5A40}
+  .chip.progress{background:var(--primary-soft);color:var(--primary-ink)}
+  .chip.warn{background:var(--warn-soft);color:var(--warn)}
+  .chip.accent{background:var(--accent-soft);color:#8B3318}
+  .chip.neutral{background:var(--surface-2);color:var(--text-2)}
+  .chip .pulse{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,76,58,0.4)}70%{box-shadow:0 0 0 6px rgba(15,76,58,0)}100%{box-shadow:0 0 0 0 rgba(15,76,58,0)}}
+  .btn{width:100%;padding:16px;border-radius:18px;background:var(--primary);color:#fff;font-family:inherit;font-size:15px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn.accent{background:var(--accent)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong)}
+  .btn.large{padding:22px;font-size:17px;border-radius:22px}
+  .num{font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  .h-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3)}
+  .h-sub{font-size:13px;color:var(--text-2);line-height:1.5}
+  .avatar{width:36px;height:36px;background:var(--primary-soft);color:var(--primary-ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+  .avatar.lg{width:48px;height:48px;font-size:16px}
+  .delivery-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;position:relative}
+  .delivery-card .stripe{position:absolute;left:0;top:18px;bottom:18px;width:3px;background:var(--accent);border-radius:3px}
+  .data-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px}
+  .data-row+.data-row{border-top:1px solid var(--border)}
+  .data-row .lbl{color:var(--text-2)}
+  .data-row .val{color:var(--text);font-weight:500}
+  .pill-nav{display:flex;gap:6px;background:var(--surface-2);padding:4px;border-radius:100px;font-size:12px;font-weight:500}
+  .pill-nav span{flex:1;padding:7px 0;text-align:center;color:var(--text-2);border-radius:100px}
+  .pill-nav span.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.06)}
+  .map-bg{background:linear-gradient(135deg,#E8ECE3,#D4DCC9);position:relative;overflow:hidden}
+  .map-bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.4) 1px,transparent 1px);background-size:24px 24px;opacity:0.6}
+  .pin{position:absolute;width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent);box-shadow:0 4px 12px rgba(224,87,61,0.4);display:flex;align-items:center;justify-content:center}
+  .pin svg{transform:rotate(45deg)}
+  .pin.start{background:var(--primary)}
+  .otp-row{display:flex;gap:6px;justify-content:center}
+  .otp-cell{width:38px;height:52px;border:1.5px solid var(--border-strong);border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;font-weight:500}
+  .otp-cell.filled{border-color:var(--primary);background:var(--primary-soft);color:var(--primary-ink)}
+  .otp-cell.cursor{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .section-header{max-width:1500px;margin:80px auto 32px;padding:0 12px}
+  .section-header h2{font-family:'Fraunces',serif;font-weight:500;font-size:28px;color:#DCDCD3;letter-spacing:-0.01em}
+  .section-header .sub{font-size:13px;color:#6E6E68;margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+  .kpi{background:var(--surface);border-radius:16px;padding:14px;border:1px solid var(--border)}
+  .kpi .num-big{font-family:'Fraunces',serif;font-size:24px;font-weight:500}
+  .kpi .lbl{font-size:11px;color:var(--text-3);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+  .toggle{width:44px;height:24px;background:var(--success);border-radius:100px;position:relative;flex-shrink:0}
+  .toggle::after{content:'';position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+</style>
+</head>
+<body>
+
+<div class="gallery-header">
+  <h1>Pisgah — Rider v3</h1>
+  <div class="sub">Rider is mobile-first by definition. Picks up dispatched prescriptions from the pharmacy, navigates to patient, confirms with the 6-digit code the patient shows them. Big buttons, big type, glove-friendly tap targets — they're on a bike.</div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2E7D5B"></span>● live — works today</span>
+    <span><span class="dot" style="background:#E0573D"></span>○ to build — operational vision</span>
+  </div>
+</div>
+
+<div class="section-header"><div class="sub">Section 01</div><h2>Available · Deliveries · Confirm</h2></div>
+<div class="grid">
+
+  <!-- 1. AVAILABILITY TOGGLE / HOME -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>01</b> · Today · Available <span class="status build">○ to build</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 16px;">
+          <div><div class="greeting-small">Hi, Bashir</div><h1>You're online</h1></div>
+          <div class="toggle"></div>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;">
+
+          <div class="card dark" style="padding:20px;text-align:center;">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Today's earnings</div>
+            <div class="num" style="font-family:'Fraunces',serif;font-size:38px;font-weight:500;color:#fff;margin-top:6px;">₦8,400</div>
+            <div style="font-size:12px;color:rgba(220,237,228,0.7);">12 deliveries · 6h online</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="kpi"><div class="num-big num">98%</div><div class="lbl">On-time rate</div></div>
+            <div class="kpi"><div class="num-big num">4.9</div><div class="lbl">Patient rating</div></div>
+          </div>
+
+          <div class="card" style="padding:14px;border:1.5px solid var(--accent);background:var(--accent-soft);">
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+              <div style="width:36px;height:36px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+              </div>
+              <div style="flex:1;"><div style="font-weight:700;font-size:14px;color:#8B3318;">New delivery</div><div style="font-size:11px;color:#8B3318;opacity:0.7;">Lagoon Pharmacy → 12 Adekunle St</div></div>
+              <div style="font-size:13px;font-weight:700;color:#8B3318;" class="num">₦500</div>
+            </div>
+            <button class="btn accent" style="padding:12px;">Accept · 2.1 km</button>
+          </div>
+
+          <div class="h-eyebrow" style="padding-top:6px;">Earlier today</div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:500;font-size:13px;">Folake A. · UCH Pharmacy</div><div class="h-sub" style="font-size:11px;">Delivered 8:42 · ₦600</div></div>
+              <span class="chip success">Done</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="home-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ACTIVE DELIVERY DETAIL -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>02</b> · Delivery · Going there <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="display:flex;flex-direction:column;">
+        <div class="map-bg" style="flex:1;position:relative;min-height:280px;">
+          <div class="pin start" style="top:60px;left:50px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div class="pin" style="bottom:60px;right:60px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <svg style="position:absolute;inset:0;" viewBox="0 0 320 280" preserveAspectRatio="none">
+            <path d="M 70 80 Q 130 80 160 140 Q 200 200 250 220" stroke="var(--primary)" stroke-width="3" fill="none" stroke-dasharray="6 4" opacity="0.7"/>
+          </svg>
+        </div>
+        <div style="background:#fff;border-radius:24px 24px 0 0;margin-top:-20px;padding:18px 20px 24px;box-shadow:0 -8px 24px -8px rgba(0,0,0,0.1);position:relative;">
+          <div style="width:36px;height:4px;background:var(--border-strong);border-radius:4px;margin:0 auto 16px;"></div>
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+            <div class="avatar lg accent" style="background:var(--accent-soft);color:#8B3318;">AU</div>
+            <div style="flex:1;"><div style="font-weight:600;font-size:15px;">Adaeze Uche</div><div style="font-size:12px;color:var(--text-3);margin-top:2px;">12 Adekunle St, Yaba</div></div>
+            <button class="icon-btn" style="background:var(--primary);border:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg></button>
+          </div>
+          <div style="display:flex;gap:18px;padding:12px;background:var(--surface-2);border-radius:14px;margin-bottom:14px;">
+            <div style="flex:1;"><div class="h-eyebrow" style="font-size:10px;">ETA</div><div class="num" style="font-family:'Fraunces',serif;font-size:20px;font-weight:500;">6 min</div></div>
+            <div style="flex:1;"><div class="h-eyebrow" style="font-size:10px;">Distance</div><div class="num" style="font-family:'Fraunces',serif;font-size:20px;font-weight:500;">2.1 km</div></div>
+            <div style="flex:1;"><div class="h-eyebrow" style="font-size:10px;">Fee</div><div class="num" style="font-family:'Fraunces',serif;font-size:20px;font-weight:500;">₦500</div></div>
+          </div>
+          <button class="btn large">Arrived</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 3. CONFIRM CODE -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>03</b> · Arrived · Enter code <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Delivery · MAL-2479</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <div style="text-align:center;padding:8px 0;">
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;letter-spacing:-0.01em;">Ask Adaeze for her<br/>6-digit code</h1>
+            <p class="h-sub" style="margin-top:8px;">Only enter it when the package is in her hand.</p>
+          </div>
+
+          <div class="card" style="padding:14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar accent">AU</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Adaeze Uche</div><div class="h-sub" style="font-size:11px;">12 Adekunle St · Coartem + Paracetamol</div></div>
+            </div>
+          </div>
+
+          <div style="padding:20px 0;">
+            <div class="otp-row">
+              <div class="otp-cell filled">8</div>
+              <div class="otp-cell filled">4</div>
+              <div class="otp-cell filled">2</div>
+              <div class="otp-cell cursor">▎</div>
+              <div class="otp-cell"></div>
+              <div class="otp-cell"></div>
+            </div>
+            <p class="h-sub" style="text-align:center;margin-top:14px;font-size:12px;">3 attempts left</p>
+          </div>
+
+          <button class="btn large">Confirm delivered</button>
+          <button class="btn ghost">Report a problem</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-header"><div class="sub">Section 02</div><h2>Done · History</h2></div>
+<div class="grid">
+
+  <!-- 4. DELIVERED CONFIRMATION -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>04</b> · Delivered · Earnings updated <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="screen-body" style="display:flex;flex-direction:column;align-items:center;text-align:center;overflow:visible;padding-top:32px;">
+          <div style="width:104px;height:104px;border-radius:50%;background:#E6F1EB;color:var(--success);display:flex;align-items:center;justify-content:center;margin-top:28px;position:relative;">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <div style="position:absolute;inset:-8px;border-radius:50%;border:2px dashed var(--success);opacity:0.3;"></div>
+          </div>
+          <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:28px;letter-spacing:-0.01em;margin-top:28px;">Delivered</h2>
+          <p class="h-sub" style="margin-top:8px;max-width:240px;font-size:13px;">Adaeze confirmed receipt. ₦500 added to your earnings.</p>
+
+          <div class="card dark" style="margin-top:28px;width:100%;padding:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Today</div><div class="num" style="font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:#fff;margin-top:4px;">₦8,900</div></div>
+              <div><div style="font-size:11px;color:rgba(220,237,228,0.6);text-align:right;">13 deliveries</div></div>
+            </div>
+          </div>
+
+          <div style="margin-top:auto;padding:24px 0;display:flex;gap:8px;width:100%;">
+            <button class="btn ghost" style="flex:1;">Pause</button>
+            <button class="btn large" style="flex:2;padding:18px;">Next delivery</button>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:880px;margin:96px auto 24px;text-align:center;font-size:12px;color:#6E6E68;letter-spacing:0.06em;">
+  PISGAH MOBILE · RIDER V3 · 4 SCREENS · 23 MAY 2026
+</div>
+
+</body>
+</html>
