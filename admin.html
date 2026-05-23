@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pisgah Mobile — Hospital Admin v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg-gallery:#1A1A18;--bg:#FAFAF6;--surface:#FFFFFF;--surface-2:#F4F4EE;--border:#EDEDE6;--border-strong:#DCDCD3;--text:#0A0A0A;--text-2:#5E5E5A;--text-3:#9B9B95;--primary:#0F4C3A;--primary-soft:#E6EFEA;--primary-ink:#0A2F25;--primary-grad:linear-gradient(135deg,#0F4C3A 0%,#1A6B53 100%);--accent:#E0573D;--accent-soft:#FCEDE7;--warn:#B7791F;--warn-soft:#FBF1DD;--danger:#B23A48;--danger-soft:#FCEDED;--success:#2E7D5B;--info:#2C5282;--info-soft:#E1ECF7;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:'Inter',sans-serif}
+  body{background:var(--bg-gallery);color:#E4E4E0;min-height:100vh;padding:64px 32px 96px;-webkit-font-smoothing:antialiased}
+  .gallery-header{max-width:1280px;margin:0 auto 56px}
+  .gallery-header h1{font-family:'Fraunces',serif;font-weight:500;font-size:44px;letter-spacing:-0.02em;color:#FAFAF6;margin-bottom:12px}
+  .gallery-header .sub{font-size:15px;color:#8C8C84;max-width:720px;line-height:1.55}
+  .legend{margin-top:20px;display:flex;gap:16px;font-size:12px;color:#A0A099}
+  .legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,320px);gap:72px 40px;max-width:1500px;margin:0 auto;justify-content:center}
+  .frame-wrap{display:flex;flex-direction:column;align-items:center}
+  .frame-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#6E6E68;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .frame-label b{color:#C7C7BE;font-weight:600}
+  .frame-label .status{font-size:10px;padding:2px 8px;border-radius:100px}
+  .frame-label .live{background:rgba(46,125,91,0.18);color:#7FBE9E}
+  .frame-label .build{background:rgba(224,87,61,0.18);color:#E89A87}
+  .phone{width:320px;height:690px;background:var(--bg);border-radius:44px;box-shadow:0 0 0 8px #2B2B27,0 0 0 9px #3A3A35,0 30px 60px -20px rgba(0,0,0,0.6),0 12px 32px -8px rgba(0,0,0,0.4);overflow:hidden;position:relative;color:var(--text);display:flex;flex-direction:column}
+  .status-bar{height:44px;padding:14px 24px 0;display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+  .status-icons{display:flex;gap:6px;align-items:center}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#0A0A0A;border-radius:18px;z-index:10}
+  .home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(0,0,0,0.3);border-radius:3px;z-index:10}
+  .screen{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .screen-body{flex:1;overflow:hidden;padding:0 20px}
+  .top-bar{padding:8px 4px 20px;display:flex;align-items:center;justify-content:space-between}
+  .top-bar h1{font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;margin-top:2px}
+  .icon-btn{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--text);position:relative}
+  svg{display:block}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:16px}
+  .card.dark{background:var(--primary-grad);color:#DCEDE4;border-color:transparent}
+  .card.soft{background:var(--primary-soft);border-color:transparent}
+  .card.warn{background:var(--warn-soft);border-color:transparent}
+  .card-row{display:flex;align-items:center;justify-content:space-between}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .stack-sm{display:flex;flex-direction:column;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600}
+  .chip.success{background:#E6F1EB;color:#1F5A40}
+  .chip.warn{background:var(--warn-soft);color:var(--warn)}
+  .chip.neutral{background:var(--surface-2);color:var(--text-2)}
+  .chip.danger{background:var(--danger-soft);color:var(--danger)}
+  .btn{width:100%;padding:16px;border-radius:18px;background:var(--primary);color:#fff;font-family:inherit;font-size:15px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong)}
+  .btn.danger{background:var(--danger)}
+  .btn.sm{padding:10px 14px;border-radius:12px;font-size:13px;width:auto}
+  .num{font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  .h-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3)}
+  .h-sub{font-size:13px;color:var(--text-2);line-height:1.5}
+  .avatar{width:36px;height:36px;background:var(--primary-soft);color:var(--primary-ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+  .data-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px}
+  .data-row+.data-row{border-top:1px solid var(--border)}
+  .data-row .lbl{color:var(--text-2)}
+  .data-row .val{color:var(--text);font-weight:500}
+  .row{display:flex;align-items:center;gap:12px;padding:14px 0}
+  .row+.row{border-top:1px solid var(--border)}
+  .row .row-meta{font-size:12px;color:var(--text-3)}
+  .kpi{background:var(--surface);border-radius:16px;padding:14px;border:1px solid var(--border)}
+  .kpi .num-big{font-family:'Fraunces',serif;font-size:24px;font-weight:500}
+  .kpi .lbl{font-size:11px;color:var(--text-3);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+  .pill-nav{display:flex;gap:6px;background:var(--surface-2);padding:4px;border-radius:100px;font-size:12px;font-weight:500}
+  .pill-nav span{flex:1;padding:7px 0;text-align:center;color:var(--text-2);border-radius:100px}
+  .pill-nav span.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.06)}
+  .toggle{width:42px;height:24px;background:var(--primary);border-radius:100px;position:relative;flex-shrink:0}
+  .toggle::after{content:'';position:absolute;top:2px;right:2px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+  .toggle.off{background:var(--border-strong)}
+  .toggle.off::after{right:auto;left:2px}
+  .section-header{max-width:1500px;margin:80px auto 32px;padding:0 12px}
+  .section-header h2{font-family:'Fraunces',serif;font-weight:500;font-size:28px;color:#DCDCD3;letter-spacing:-0.01em}
+  .section-header .sub{font-size:13px;color:#6E6E68;margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+  .range-slider{position:relative;height:32px;background:var(--surface-2);border-radius:100px;overflow:hidden}
+  .range-slider .range{position:absolute;top:0;bottom:0;background:var(--primary-soft);left:30%;right:25%}
+  .range-slider .handle{position:absolute;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;background:#fff;border-radius:50%;border:2.5px solid var(--primary);box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+</style>
+</head>
+<body>
+
+<div class="gallery-header">
+  <h1>Pisgah — Hospital Admin v3</h1>
+  <div class="sub">Hospital admin on a phone: at-a-glance ops dashboard, staff management, settings that actually tune the software (vital ranges, payment policy, test catalog). Heavier operations (audit logs, full reports) stay desktop.</div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2E7D5B"></span>● live — works today</span>
+    <span><span class="dot" style="background:#E0573D"></span>○ to build — operational vision</span>
+  </div>
+</div>
+
+<div class="section-header"><div class="sub">Section 01</div><h2>Pulse · Staff</h2></div>
+<div class="grid">
+
+  <!-- 1. ADMIN DASHBOARD -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>01</b> · Today · Hospital pulse <span class="status build">○ to build</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 16px;">
+          <div><div class="h-sub" style="font-size:12px;">Lagoon Clinic</div><h1>Hospital pulse</h1></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></button>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;">
+
+          <div class="card dark" style="padding:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Right now</div>
+                <div class="num" style="font-family:'Fraunces',serif;font-size:34px;font-weight:500;color:#fff;margin-top:6px;">42</div>
+                <div style="font-size:12px;color:rgba(220,237,228,0.7);">patients in flow</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Revenue</div>
+                <div class="num" style="font-family:'Fraunces',serif;font-size:22px;font-weight:500;color:#fff;margin-top:6px;">₦284k</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="kpi"><div class="num-big num">96%</div><div class="lbl">Doctor utilisation</div></div>
+            <div class="kpi"><div class="num-big num">23m</div><div class="lbl">Avg wait</div></div>
+            <div class="kpi"><div class="num-big num">17</div><div class="lbl">Triaged today</div></div>
+            <div class="kpi"><div class="num-big num">4.8</div><div class="lbl">Patient rating</div></div>
+          </div>
+
+          <div class="h-eyebrow" style="padding-top:6px;">Bottlenecks</div>
+
+          <div class="card warn" style="padding:14px;display:flex;gap:10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div style="flex:1;font-size:12px;color:#8C5814;line-height:1.5;">
+              <div style="font-weight:600;font-size:13px;margin-bottom:2px;">Lab queue is backing up</div>
+              4 samples waiting · est. 38 min · consider second tech
+            </div>
+          </div>
+
+        </div>
+        <div class="home-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. STAFF LIST -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>02</b> · Staff · Roster <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><h1>Staff</h1><div class="h-sub" style="margin-top:2px;">14 active · 2 invites pending</div></div>
+          <button class="icon-btn" style="background:var(--primary);color:#fff;border:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+        <div class="screen-body stack-sm" style="overflow:visible;">
+          <div class="pill-nav"><span class="active">All</span><span>Doctor</span><span>Nurse</span><span>Lab</span></div>
+
+          <div class="card" style="padding:12px 14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar">OA</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Dr. Olamide Adeyemi</div><div class="h-sub" style="font-size:11px;">Doctor · MDCN-049182</div></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar">FN</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Dr. Nkechi Eze</div><div class="h-sub" style="font-size:11px;">Doctor · MDCN-052741</div></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar">BA</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Bukola Adesanya</div><div class="h-sub" style="font-size:11px;">Nurse</div></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar">FP</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Funke Pedro</div><div class="h-sub" style="font-size:11px;">Pharmacist · PCN 4928</div></div>
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--success);"></div>
+            </div>
+          </div>
+
+          <div class="h-eyebrow" style="padding-top:8px;">Pending invites · 2</div>
+          <div class="card" style="padding:12px 14px;opacity:0.85;">
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div class="avatar" style="background:var(--warn-soft);color:var(--warn);">?</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">aremu@lagoonclinic.ng</div><div class="h-sub" style="font-size:11px;">Lab tech · invited 2 days ago</div></div>
+              <button class="btn sm" style="background:var(--surface-2);color:var(--text);">Resend</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 3. INVITE STAFF -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>03</b> · Invite · New staff <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Invite staff</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;">Add someone to the team</h1>
+
+          <div>
+            <div class="h-eyebrow" style="margin-bottom:6px;">Name</div>
+            <div style="background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:12px 14px;font-size:14px;">Aremu Yetunde</div>
+          </div>
+
+          <div>
+            <div class="h-eyebrow" style="margin-bottom:6px;">Work email</div>
+            <div style="background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:12px 14px;font-size:14px;">aremu@lagoonclinic.ng</div>
+          </div>
+
+          <div>
+            <div class="h-eyebrow" style="margin-bottom:6px;">Role</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip neutral" style="padding:8px 14px;">Doctor</span>
+              <span class="chip neutral" style="padding:8px 14px;">Nurse</span>
+              <span class="chip neutral" style="padding:8px 14px;background:var(--primary-soft);color:var(--primary-ink);font-weight:600;">Lab tech</span>
+              <span class="chip neutral" style="padding:8px 14px;">Pharmacist</span>
+              <span class="chip neutral" style="padding:8px 14px;">Rider</span>
+              <span class="chip neutral" style="padding:8px 14px;">Accounts</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="h-eyebrow" style="margin-bottom:6px;">License (lab techs may skip)</div>
+            <div style="background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--text-3);" class="num">MLSCN 8392··· ▎</div>
+          </div>
+
+          <div class="card soft" style="padding:12px;display:flex;gap:10px;font-size:12px;color:var(--primary-ink);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <div>One-time link will be emailed. Expires in 72 hours.</div>
+          </div>
+
+          <button class="btn">Send invite</button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-header"><div class="sub">Section 02</div><h2>Settings · Vital ranges · Catalog</h2></div>
+<div class="grid">
+
+  <!-- 4. SETTINGS HOME -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>04</b> · Settings · Hospital <span class="status build">○ to build</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 16px;">
+          <h1>Settings</h1>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;">
+
+          <div class="card dark" style="padding:18px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Fraunces',serif;font-size:18px;">L</div>
+              <div><div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;">Lagoon Clinic</div><div style="font-size:11px;color:rgba(220,237,228,0.7);margin-top:2px;">lagoonclinic.pisgah.eth · Yaba</div></div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:6px 16px;">
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Vital ranges</div><div class="row-meta">Per-hospital BP, temp, pulse, SpO₂</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:#8B3318;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Payment policy</div><div class="row-meta">Pay before lab · enabled</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Test catalog</div><div class="row-meta">42 tests · prices</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Notifications</div><div class="row-meta">WhatsApp · SMS templates</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+            <div class="row"><div style="width:32px;height:32px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg></div><div style="flex:1;"><div style="font-weight:500;font-size:14px;">Facility identity</div><div class="row-meta">ENS · wallet · attestations</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 5. VITAL RANGES -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>05</b> · Vital ranges · Adult <span class="status build">○ to build</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Vital ranges</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <div>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;">Adult ranges</h1>
+            <p class="h-sub" style="margin-top:6px;font-size:12px;">Triage will flag values outside these.</p>
+          </div>
+
+          <div class="pill-nav"><span>Neonate</span><span>Infant</span><span>Child</span><span class="active">Adult</span><span>Elderly</span></div>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:10px;"><div style="font-weight:600;font-size:14px;">BP systolic <span style="color:var(--text-3);font-weight:400;font-size:12px;">mmHg</span></div><div style="font-size:13px;font-weight:600;" class="num">90 – 140</div></div>
+            <div class="range-slider"><div class="range"></div><div class="handle" style="left:30%;"></div><div class="handle" style="left:75%;"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:10px;"><div style="font-weight:600;font-size:14px;">Temperature <span style="color:var(--text-3);font-weight:400;font-size:12px;">°C</span></div><div style="font-size:13px;font-weight:600;" class="num">36.1 – 37.2</div></div>
+            <div class="range-slider"><div class="range" style="left:35%;right:35%;"></div><div class="handle" style="left:35%;"></div><div class="handle" style="left:65%;"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:10px;"><div style="font-weight:600;font-size:14px;">Pulse <span style="color:var(--text-3);font-weight:400;font-size:12px;">bpm</span></div><div style="font-size:13px;font-weight:600;" class="num">60 – 100</div></div>
+            <div class="range-slider"><div class="range" style="left:25%;right:35%;"></div><div class="handle" style="left:25%;"></div><div class="handle" style="left:65%;"></div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-row" style="margin-bottom:10px;"><div style="font-weight:600;font-size:14px;">SpO₂ <span style="color:var(--text-3);font-weight:400;font-size:12px;">%</span></div><div style="font-size:13px;font-weight:600;" class="num">95 – 100</div></div>
+            <div class="range-slider"><div class="range" style="left:70%;right:0%;"></div><div class="handle" style="left:70%;"></div><div class="handle" style="left:100%;"></div></div>
+          </div>
+
+          <div class="card warn" style="padding:12px;display:flex;gap:10px;font-size:12px;color:#8C5814;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>Out-of-range vitals will require a nurse note — they don't block triage.</div>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="btn ghost" style="flex:1;">Reset to default</button>
+            <button class="btn" style="flex:2;">Save</button>
+          </div>
+
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 6. TEST CATALOG -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>06</b> · Tests · Catalog <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><h1>Tests</h1><div class="h-sub" style="margin-top:2px;">42 in catalog · Lagoon Lab</div></div>
+          <button class="icon-btn" style="background:var(--primary);color:#fff;border:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        </div>
+        <div class="screen-body stack-sm" style="overflow:visible;">
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">Malaria RDT</div><div class="h-sub" style="font-size:11px;">Most ordered · 28 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦2,500</div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">Typhoid Widal</div><div class="h-sub" style="font-size:11px;">22 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦2,000</div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">Fasting Blood Sugar</div><div class="h-sub" style="font-size:11px;">15 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦1,500</div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">HbA1c</div><div class="h-sub" style="font-size:11px;">8 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦5,500</div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">Liver Function Panel</div><div class="h-sub" style="font-size:11px;">6 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦6,200</div>
+            </div>
+          </div>
+          <div class="card" style="padding:12px 14px;">
+            <div class="card-row">
+              <div><div style="font-weight:600;font-size:13px;">Cholesterol Panel</div><div class="h-sub" style="font-size:11px;">4 this week</div></div>
+              <div class="num" style="font-weight:600;font-size:14px;">₦3,800</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:880px;margin:96px auto 24px;text-align:center;font-size:12px;color:#6E6E68;letter-spacing:0.06em;">
+  PISGAH MOBILE · HOSPITAL ADMIN V3 · 6 SCREENS · 23 MAY 2026 · Audit log, full reports, super-admin operations stay desktop.
+</div>
+
+</body>
+</html>
