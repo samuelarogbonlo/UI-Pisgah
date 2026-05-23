@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pisgah Mobile — Lab Tech v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg-gallery:#1A1A18;--bg:#FAFAF6;--surface:#FFFFFF;--surface-2:#F4F4EE;--border:#EDEDE6;--border-strong:#DCDCD3;--text:#0A0A0A;--text-2:#5E5E5A;--text-3:#9B9B95;--primary:#0F4C3A;--primary-soft:#E6EFEA;--primary-ink:#0A2F25;--primary-grad:linear-gradient(135deg,#0F4C3A 0%,#1A6B53 100%);--accent:#E0573D;--accent-soft:#FCEDE7;--warn:#B7791F;--warn-soft:#FBF1DD;--danger:#B23A48;--danger-soft:#FCEDED;--success:#2E7D5B;--info:#2C5282;--info-soft:#E1ECF7;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:'Inter',sans-serif}
+  body{background:var(--bg-gallery);color:#E4E4E0;min-height:100vh;padding:64px 32px 96px;-webkit-font-smoothing:antialiased}
+  .gallery-header{max-width:1280px;margin:0 auto 56px}
+  .gallery-header h1{font-family:'Fraunces',serif;font-weight:500;font-size:44px;letter-spacing:-0.02em;color:#FAFAF6;margin-bottom:12px}
+  .gallery-header .sub{font-size:15px;color:#8C8C84;max-width:720px;line-height:1.55}
+  .legend{margin-top:20px;display:flex;gap:16px;font-size:12px;color:#A0A099}
+  .legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,320px);gap:72px 40px;max-width:1500px;margin:0 auto;justify-content:center}
+  .frame-wrap{display:flex;flex-direction:column;align-items:center}
+  .frame-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#6E6E68;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .frame-label b{color:#C7C7BE;font-weight:600}
+  .frame-label .status{font-size:10px;padding:2px 8px;border-radius:100px;letter-spacing:0.04em}
+  .frame-label .live{background:rgba(46,125,91,0.18);color:#7FBE9E}
+  .frame-label .build{background:rgba(224,87,61,0.18);color:#E89A87}
+  .phone{width:320px;height:690px;background:var(--bg);border-radius:44px;box-shadow:0 0 0 8px #2B2B27,0 0 0 9px #3A3A35,0 30px 60px -20px rgba(0,0,0,0.6),0 12px 32px -8px rgba(0,0,0,0.4);overflow:hidden;position:relative;color:var(--text);display:flex;flex-direction:column}
+  .status-bar{height:44px;padding:14px 24px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+  .status-icons{display:flex;gap:6px;align-items:center}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#0A0A0A;border-radius:18px;z-index:10}
+  .home-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(0,0,0,0.3);border-radius:3px;z-index:10}
+  .screen{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .screen-body{flex:1;overflow:hidden;padding:0 20px}
+  .top-bar{padding:8px 4px 20px;display:flex;align-items:center;justify-content:space-between}
+  .top-bar .greeting-small{font-size:13px;color:var(--text-2)}
+  .top-bar h1{font-family:'Fraunces',serif;font-weight:500;font-size:26px;letter-spacing:-0.01em;margin-top:2px}
+  .icon-btn{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--text);position:relative}
+  .icon-btn .dot{position:absolute;top:9px;right:9px;width:8px;height:8px;background:var(--accent);border-radius:50%;border:2px solid var(--surface)}
+  svg{display:block}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:16px}
+  .card.dark{background:var(--primary-grad);color:#DCEDE4;border-color:transparent}
+  .card.accent{background:var(--accent-soft);border-color:transparent}
+  .card.soft{background:var(--primary-soft);border-color:transparent}
+  .card.warn{background:var(--warn-soft);border-color:transparent}
+  .card.info{background:var(--info-soft);border-color:transparent}
+  .card.danger{background:var(--danger-soft);border-color:transparent}
+  .card-row{display:flex;align-items:center;justify-content:space-between}
+  .stack{display:flex;flex-direction:column;gap:12px}
+  .stack-sm{display:flex;flex-direction:column;gap:8px}
+  .tab-bar{flex-shrink:0;margin:8px 12px 0;height:64px;background:var(--surface);border-radius:22px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;box-shadow:0 -4px 20px -8px rgba(0,0,0,0.06);padding-bottom:6px}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:8px;color:var(--text-3);font-size:10px;font-weight:500}
+  .tab.active{color:var(--primary)}
+  .tab.active svg{stroke:var(--primary)}
+  .tab svg{stroke:var(--text-3)}
+  .tab.fab{background:var(--primary);color:#fff;border-radius:14px;width:44px;flex:0 0 44px;height:44px;align-self:center;padding:0;align-items:center;justify-content:center}
+  .tab.fab svg{stroke:#fff}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.02em}
+  .chip.success{background:#E6F1EB;color:#1F5A40}
+  .chip.progress{background:var(--primary-soft);color:var(--primary-ink)}
+  .chip.warn{background:var(--warn-soft);color:var(--warn)}
+  .chip.accent{background:var(--accent-soft);color:#8B3318}
+  .chip.danger{background:var(--danger-soft);color:var(--danger)}
+  .chip.neutral{background:var(--surface-2);color:var(--text-2)}
+  .chip.info{background:var(--info-soft);color:var(--info)}
+  .chip .pulse{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,76,58,0.4)}70%{box-shadow:0 0 0 6px rgba(15,76,58,0)}100%{box-shadow:0 0 0 0 rgba(15,76,58,0)}}
+  .btn{width:100%;padding:16px;border-radius:18px;background:var(--primary);color:#fff;font-family:inherit;font-size:15px;font-weight:600;border:none;letter-spacing:0.01em;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn.accent{background:var(--accent)}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border-strong)}
+  .btn.danger{background:var(--danger)}
+  .btn.sm{padding:10px 14px;border-radius:12px;font-size:13px;width:auto}
+  .num{font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+  .h-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3)}
+  .h-title{font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em}
+  .h-sub{font-size:13px;color:var(--text-2);line-height:1.5}
+  .h-body{font-size:14px;line-height:1.55;color:var(--text)}
+  .avatar{width:36px;height:36px;background:var(--primary-soft);color:var(--primary-ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+  .avatar.lg{width:48px;height:48px;font-size:16px}
+  .avatar.urgent{background:var(--accent-soft);color:#8B3318}
+  .order-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;position:relative}
+  .order-card .stripe{position:absolute;left:0;top:18px;bottom:18px;width:3px;background:var(--text-3);border-radius:3px}
+  .order-card.urgent .stripe{background:var(--accent)}
+  .order-card.paid .stripe{background:var(--success)}
+  .data-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px}
+  .data-row+.data-row{border-top:1px solid var(--border)}
+  .data-row .lbl{color:var(--text-2)}
+  .data-row .val{color:var(--text);font-weight:500}
+  .pill-nav{display:flex;gap:6px;background:var(--surface-2);padding:4px;border-radius:100px;font-size:12px;font-weight:500}
+  .pill-nav span{flex:1;padding:7px 0;text-align:center;color:var(--text-2);border-radius:100px}
+  .pill-nav span.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,0.06)}
+  .qr{width:80px;height:80px;background:linear-gradient(90deg,var(--text) 50%,transparent 50%) 0 0/6px 6px,linear-gradient(0deg,var(--text) 50%,transparent 50%) 0 0/6px 6px;border-radius:6px;border:2px solid var(--text);background-color:#fff;margin:0 auto}
+  .section-header{max-width:1500px;margin:80px auto 32px;padding:0 12px}
+  .section-header h2{font-family:'Fraunces',serif;font-weight:500;font-size:28px;color:#DCDCD3;letter-spacing:-0.01em}
+  .section-header .sub{font-size:13px;color:#6E6E68;margin-top:6px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+  .kpi{background:var(--surface);border-radius:16px;padding:14px;border:1px solid var(--border)}
+  .kpi .num-big{font-family:'Fraunces',serif;font-size:24px;font-weight:500;letter-spacing:-0.01em}
+  .kpi .lbl{font-size:11px;color:var(--text-3);margin-top:2px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="gallery-header">
+  <h1>Pisgah — Lab Tech v3</h1>
+  <div class="sub">Lab tech opens the app at the bench. They see incoming orders only AFTER payment is confirmed (operational vision: lab is gated on patient transfer). They collect the sample by scanning the patient's Pisgah ID, then upload the result — which triggers the AI draft to the doctor automatically.</div>
+  <div class="legend">
+    <span><span class="dot" style="background:#2E7D5B"></span>● live — works today</span>
+    <span><span class="dot" style="background:#E0573D"></span>○ to build — operational vision</span>
+  </div>
+</div>
+
+<div class="section-header"><div class="sub">Section 01</div><h2>Today · Queue</h2></div>
+<div class="grid">
+
+  <!-- 1. TODAY DASHBOARD -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>01</b> · Today · Lab dashboard <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 16px;">
+          <div><div class="greeting-small">Tuesday · 14 May</div><h1>Lab bench</h1></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg><span class="dot"></span></button>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;">
+
+          <div class="card dark" style="padding:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Waiting on you</div>
+                <div class="num" style="font-family:'Fraunces',serif;font-size:36px;font-weight:500;color:#fff;margin-top:6px;letter-spacing:-0.01em;">4</div>
+                <div style="font-size:13px;color:rgba(220,237,228,0.7);margin-top:2px;">samples to collect</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6FBE9D;">Running</div>
+                <div class="num" style="font-family:'Fraunces',serif;font-size:24px;font-weight:500;color:#fff;margin-top:6px;">2</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="kpi"><div class="num-big num">17</div><div class="lbl">Done today</div></div>
+            <div class="kpi"><div class="num-big num">23m</div><div class="lbl">Avg turnaround</div></div>
+          </div>
+
+          <div class="h-eyebrow" style="padding-top:6px;">Next sample</div>
+
+          <div class="order-card urgent">
+            <div class="stripe"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+              <div class="avatar urgent">AU</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Adaeze Uche</div><div class="h-sub" style="font-size:11px;margin-top:1px;">F 34 · LGH-0000189</div></div>
+              <span class="chip accent" style="font-size:10px;">Urgent</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <span class="chip neutral">Malaria RDT</span>
+              <span class="chip neutral">Typhoid Widal</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;background:#E6F1EB;border-radius:10px;font-size:12px;color:#1F5A40;font-weight:500;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
+              Paid · ₦4,500 · cleared 3 min ago
+            </div>
+          </div>
+
+          <div class="order-card paid">
+            <div class="stripe"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+              <div class="avatar">EO</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:14px;">Edikan Okon</div><div class="h-sub" style="font-size:11px;">M 28 · MAL-2479</div></div>
+              <span class="chip success" style="font-size:10px;">Paid</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip neutral">FBS</span>
+              <span class="chip neutral">HbA1c</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="tab-bar">
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Today</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Find</div>
+          <div class="tab fab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>Log</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 2. WAITING QUEUE FULL -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>02</b> · Queue · All samples <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="top-bar" style="padding:8px 20px 12px;">
+          <div><h1>Queue</h1><div class="h-sub" style="margin-top:2px;">6 orders · 4 awaiting sample</div></div>
+          <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg></button>
+        </div>
+        <div class="screen-body stack-sm" style="overflow:visible;">
+          <div class="pill-nav"><span class="active">Awaiting sample</span><span>Running</span><span>Sent</span></div>
+
+          <div class="order-card urgent" style="margin-top:8px;">
+            <div class="stripe"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+              <div class="avatar urgent">AU</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Adaeze Uche · F 34</div><div class="h-sub" style="font-size:11px;">Malaria RDT + Typhoid · Dr. Adeyemi</div></div>
+              <span class="chip success" style="font-size:10px;">Paid</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-3);">Triaged 9:18 · 4m ago</div>
+          </div>
+
+          <div class="order-card paid">
+            <div class="stripe"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+              <div class="avatar">EO</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Edikan Okon · M 28</div><div class="h-sub" style="font-size:11px;">FBS + HbA1c · Dr. Nkechi</div></div>
+              <span class="chip success" style="font-size:10px;">Paid</span>
+            </div>
+          </div>
+
+          <div class="order-card paid">
+            <div class="stripe"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+              <div class="avatar">FO</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Folake Aremu · F 41</div><div class="h-sub" style="font-size:11px;">LFT panel · Dr. Nkechi</div></div>
+              <span class="chip success" style="font-size:10px;">Paid</span>
+            </div>
+          </div>
+
+          <div class="order-card" style="opacity:0.6;">
+            <div class="stripe" style="background:var(--warn);"></div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+              <div class="avatar" style="background:var(--warn-soft);color:var(--warn);">BO</div>
+              <div style="flex:1;"><div style="font-weight:600;font-size:13px;">Bola Onyeka · M 52</div><div class="h-sub" style="font-size:11px;">Cholesterol panel</div></div>
+              <span class="chip warn" style="font-size:10px;">Pay pending</span>
+            </div>
+            <div style="font-size:11px;color:var(--warn);font-weight:500;">Cannot collect until paid</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Today</div>
+          <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Find</div>
+          <div class="tab fab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/></svg>Log</div>
+          <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>You</div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 3. SCAN PATIENT QR -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>03</b> · Collect · Scan Pisgah ID <span class="status build">○ to build</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;background:#0A0A0A;color:#fff;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span style="font-size:13px;color:rgba(255,255,255,0.6);">Scan to collect</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6.34 4.93a10 10 0 0 0 0 14.14M17.66 4.93a10 10 0 0 1 0 14.14"/><path d="M9.17 7.76a6 6 0 0 0 0 8.48M14.83 7.76a6 6 0 0 1 0 8.48"/></svg>
+        </div>
+        <div style="flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:24px;">
+          <div style="width:220px;height:220px;border:2px solid #6FBE9D;border-radius:24px;position:relative;">
+            <div style="position:absolute;top:-2px;left:-2px;width:30px;height:30px;border-top:4px solid #6FBE9D;border-left:4px solid #6FBE9D;border-radius:24px 0 0 0;"></div>
+            <div style="position:absolute;top:-2px;right:-2px;width:30px;height:30px;border-top:4px solid #6FBE9D;border-right:4px solid #6FBE9D;border-radius:0 24px 0 0;"></div>
+            <div style="position:absolute;bottom:-2px;left:-2px;width:30px;height:30px;border-bottom:4px solid #6FBE9D;border-left:4px solid #6FBE9D;border-radius:0 0 0 24px;"></div>
+            <div style="position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border-bottom:4px solid #6FBE9D;border-right:4px solid #6FBE9D;border-radius:0 0 24px 0;"></div>
+            <div style="position:absolute;top:50%;left:8px;right:8px;height:2px;background:linear-gradient(90deg,transparent,#6FBE9D,transparent);"></div>
+          </div>
+        </div>
+        <div style="padding:32px 24px 32px;text-align:center;">
+          <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;">Ask the patient<br/>to show their Pisgah ID</h2>
+          <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-top:10px;line-height:1.5;max-width:240px;margin-left:auto;margin-right:auto;">Or type their phone number manually.</p>
+          <button class="btn" style="background:rgba(255,255,255,0.1);color:#fff;margin-top:24px;">Enter number instead</button>
+        </div>
+      </div>
+      <div class="home-bar" style="background:rgba(255,255,255,0.3);"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-header"><div class="sub">Section 02</div><h2>Collect · Upload result</h2></div>
+<div class="grid">
+
+  <!-- 4. PATIENT MATCHED -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>04</b> · Patient matched · Confirm <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Order · MAL-2479</span>
+          <span></span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <div class="card" style="padding:18px;">
+            <div style="display:flex;gap:14px;align-items:center;">
+              <div class="avatar lg urgent">AU</div>
+              <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-weight:500;font-size:18px;">Adaeze Uche</div><div class="h-sub" style="font-size:12px;margin-top:2px;">F 34 · LGH-0000189</div></div>
+            </div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="chip accent">Urgent</span>
+                <span class="chip success">Paid ₦4,500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="h-eyebrow" style="margin-bottom:10px;">Tests to collect</div>
+            <div class="data-row" style="padding:8px 0;"><span class="lbl">Malaria RDT</span><span class="val">Blood · finger prick</span></div>
+            <div class="data-row" style="padding:8px 0;"><span class="lbl">Typhoid Widal</span><span class="val">Blood · venous</span></div>
+          </div>
+
+          <div class="card" style="padding:14px;">
+            <div class="h-eyebrow" style="margin-bottom:8px;">Doctor's note</div>
+            <div class="h-body" style="font-size:13px;line-height:1.55;">"Fever 3 days, headache, body aches. R/O malaria + typhoid. Patient stable."</div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;">
+              <div class="avatar" style="width:24px;height:24px;font-size:10px;">OA</div>
+              <div style="font-size:11px;color:var(--text-3);">Dr. Adeyemi · 4 min ago</div>
+            </div>
+          </div>
+
+          <button class="btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 11H7a2 2 0 0 1 0-4h2"/><path d="M15 11h2a2 2 0 0 1 0 4h-2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="12" y1="11" x2="12" y2="22"/></svg>
+            Sample collected
+          </button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 5. UPLOAD RESULT -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>05</b> · Upload · Type result <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 16px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          <span style="font-size:13px;color:var(--text-3);">Upload result · MAL-2479</span>
+          <span style="font-size:13px;color:var(--primary);font-weight:500;">Save draft</span>
+        </div>
+        <div class="screen-body stack" style="overflow:visible;padding-bottom:8px;">
+          <div>
+            <h1 style="font-family:'Fraunces',serif;font-weight:500;font-size:22px;letter-spacing:-0.01em;">Adaeze U. · result</h1>
+            <p class="h-sub" style="margin-top:6px;font-size:12px;">As soon as you upload, AI summarises and sends to Dr. Adeyemi.</p>
+          </div>
+
+          <div class="card" style="padding:14px;background:var(--surface-2);border-color:transparent;">
+            <div class="h-eyebrow" style="margin-bottom:8px;">Raw result · type or paste</div>
+            <div style="font-family:ui-monospace,monospace;font-size:12px;line-height:1.6;color:var(--text);min-height:160px;">Malaria RDT: POSITIVE (P. falciparum)<br/>Parasitemia: +<br/><br/>Widal:<br/>  O 1:80<br/>  H 1:40<br/>  → non-significant<br/><br/>Sample quality: good<br/>▎</div>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="btn ghost" style="flex:1;padding:12px;font-size:13px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Attach photo
+            </button>
+            <button class="btn ghost" style="flex:1;padding:12px;font-size:13px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              Attach PDF
+            </button>
+          </div>
+
+          <div class="card soft" style="display:flex;gap:10px;padding:12px;font-size:12px;color:var(--primary-ink);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div>Encrypted at rest. Patient cannot see this raw text — only the doctor-approved summary.</div>
+          </div>
+
+          <button class="btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-10 7L2 10"/></svg>
+            Upload · send to doctor
+          </button>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <!-- 6. UPLOADED CONFIRMATION -->
+  <div class="frame-wrap">
+    <div class="frame-label"><b>06</b> · Uploaded · AI drafting <span class="status live">● live</span></div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="status-bar"><span>9:41</span><div class="status-icons">
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="#000"><rect x="0" y="6" width="3" height="5" rx="0.5"/><rect x="4" y="4" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="9" rx="0.5"/><rect x="12" y="0" width="3" height="11" rx="0.5"/></svg>
+        <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="#000"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="#000"/></svg>
+      </div></div>
+      <div class="screen" style="overflow:auto;">
+        <div class="screen-body" style="display:flex;flex-direction:column;align-items:center;text-align:center;overflow:visible;padding-top:20px;">
+          <div style="width:88px;height:88px;border-radius:50%;background:#E6F1EB;color:var(--success);display:flex;align-items:center;justify-content:center;margin-top:32px;position:relative;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 style="font-family:'Fraunces',serif;font-weight:500;font-size:24px;margin-top:24px;">Sent to Dr. Adeyemi</h2>
+          <p class="h-sub" style="margin-top:8px;max-width:240px;font-size:13px;">AI is drafting a summary now. He'll review and approve.</p>
+
+          <div class="card" style="margin-top:24px;width:100%;padding:14px;background:var(--info-soft);border-color:transparent;text-align:left;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="width:32px;height:32px;border-radius:10px;background:rgba(44,82,130,0.2);display:flex;align-items:center;justify-content:center;color:var(--info);flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div style="flex:1;font-size:12px;color:var(--info);line-height:1.5;">
+                <div style="font-weight:600;font-size:13px;margin-bottom:4px;">AI summary in progress</div>
+                Combines this result with the nurse's triage note + Adaeze's history.
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:auto;padding:24px 0;display:flex;gap:8px;width:100%;">
+            <button class="btn ghost" style="flex:1;">Done</button>
+            <button class="btn" style="flex:1;">Next sample</button>
+          </div>
+        </div>
+      </div>
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+</div>
+
+<div style="max-width:880px;margin:96px auto 24px;text-align:center;font-size:12px;color:#6E6E68;letter-spacing:0.06em;">
+  PISGAH MOBILE · LAB TECH V3 · 6 SCREENS · 23 MAY 2026
+</div>
+
+</body>
+</html>
